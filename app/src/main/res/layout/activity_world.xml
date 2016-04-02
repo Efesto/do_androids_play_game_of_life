@@ -16,4 +16,12 @@
         android:layout_height="match_parent">
     </efestoarts.gameoflife.view.WorldView>
 
+    <Button
+        android:layout_below="@id/world"
+        android:id="@+id/start_button"
+        android:text="@string/button_start_label"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>

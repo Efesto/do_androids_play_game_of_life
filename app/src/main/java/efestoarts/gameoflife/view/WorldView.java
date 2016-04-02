@@ -31,7 +31,7 @@ public class WorldView extends RelativeLayout {
                     int cellIndexY = (int) event.getY() / getCellSize();
 
                     generation.cells[cellIndexY][cellIndexX] = !generation.cells[cellIndexY][cellIndexX];
-                    setGeneration(generation);
+                    refreshView();
                 }
 
                 return true;
@@ -44,9 +44,7 @@ public class WorldView extends RelativeLayout {
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 
-    public void setGeneration(Generation generation) {
-        this.generation = generation;
-
+    public void refreshView() {
         worldBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(worldBitmap);
 
@@ -84,4 +82,9 @@ public class WorldView extends RelativeLayout {
     public Generation getGeneration() {
         return generation;
     }
+
+    public void setGeneration(Generation generation) {
+        this.generation = generation;
+    }
+
 }

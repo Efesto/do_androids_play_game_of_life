@@ -2,6 +2,10 @@ package efestoarts.gameoflife.model;
 
 public class Life {
 
+    public Life() {
+        currentGeneration = new Generation(20);
+    }
+
     private Generation currentGeneration;
 
     public Generation nextGeneration()

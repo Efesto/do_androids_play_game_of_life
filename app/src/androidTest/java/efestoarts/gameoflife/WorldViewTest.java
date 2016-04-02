@@ -1,6 +1,8 @@
 package efestoarts.gameoflife;
 
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -15,14 +17,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import efestoarts.gameoflife.model.Generation;
-import efestoarts.gameoflife.model.Life;
+import efestoarts.gameoflife.presenter.GameOfLifePresenter;
 import efestoarts.gameoflife.view.WorldActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -31,16 +35,18 @@ public class WorldViewTest {
 
     @Rule
     public ActivityTestRule<WorldActivity> mActivityRule = new ActivityTestRule<>(
-            WorldActivity.class);
+            WorldActivity.class, false, false);
+
 
     @Mock
-    Life mockedLife;
+    GameOfLifePresenter mockedGameOfLifePresenter;
 
     @Before
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        getApp().setLife(mockedLife);
+        getApp().setGameOfLifePresenter(mockedGameOfLifePresenter);
+        mActivityRule.launchActivity(new Intent());
     }
 
     @Test
@@ -69,46 +75,52 @@ public class WorldViewTest {
     }
 
     @Test
-    public void setNewStartingGeneration() {
-        Generation gen = new Generation(2);
+    public void start_stop_button() {
+        onView(withId(R.id.start_button)).check(matches(withText("Start!")));
+        onView(withId(R.id.start_button)).perform(ViewActions.click());
+        onView(withId(R.id.start_button)).check(matches(withText("Stop!")));
+        onView(withId(R.id.start_button)).perform(ViewActions.click());
+        onView(withId(R.id.start_button)).check(matches(withText("Start!")));
+
+        verify(mockedGameOfLifePresenter, times(2)).onStartStopButtonClick();
+    }
+
+    @Test
+    public void edit_generation_with_touch() {
+        final Generation gen = new Generation(2);
         gen.cells = new boolean[][] {
                 {false, false},
                 {false, true}};
 
-        setNextGeneration(gen);
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                getApp().getGameOfLifePresenter().nextGeneration();
+                getActivity().setGeneration(gen);
             }
         });
 
         onView(withId(R.id.world)).perform(EspressoHelpers.clickXY(1, 1));
         onView(withId(R.id.world)).check(matches(new CellMatcher(2, 0, 0, true)));
 
-        getApp().getGameOfLifePresenter().setNewStartingGeneration();
         Generation expectedGeneration = new Generation(2);
         expectedGeneration.cells = new boolean[][]{
                 {true, false},
                 {false, true}};
-        verify(mockedLife).setGeneration(expectedGeneration);
+        assertEquals(expectedGeneration, getActivity().getGeneration());
     }
 
     @Test
     public void setGeneration()
     {
-        Generation gen = new Generation(2);
+        final Generation gen = new Generation(2);
         gen.cells = new boolean[][] {
                 {false, false},
                 {false, true}};
 
-        setNextGeneration(gen);
-
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                getApp().getGameOfLifePresenter().nextGeneration();
+                getActivity().setGeneration(gen);
             }
         });
 
@@ -116,10 +128,6 @@ public class WorldViewTest {
         onView(withId(R.id.world)).check(matches(new CellMatcher(2, 0, 0, false)));
         onView(withId(R.id.world)).check(matches(new CellMatcher(2, 1, 0, false)));
         onView(withId(R.id.world)).check(matches(new CellMatcher(2, 1, 1, true)));
-    }
-
-    private void setNextGeneration(Generation testGeneration) {
-        when(mockedLife.nextGeneration()).thenReturn(testGeneration);
     }
 
     private App getApp() {

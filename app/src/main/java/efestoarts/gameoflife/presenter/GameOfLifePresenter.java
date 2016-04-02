@@ -1,37 +1,57 @@
 package efestoarts.gameoflife.presenter;
 
-import efestoarts.gameoflife.App;
-import efestoarts.gameoflife.model.Generation;
+import android.os.AsyncTask;
+
 import efestoarts.gameoflife.model.Life;
 import efestoarts.gameoflife.view.WorldActivity;
 
 public class GameOfLifePresenter {
 
     private WorldActivity activity;
-    private App application;
+    private Life life;
+    private boolean keepRunning;
 
-    public GameOfLifePresenter(App application) {
-        this.application = application;
+    public GameOfLifePresenter(Life life) {
+        this.life = life;
     }
 
     public void resume(WorldActivity activity) {
         this.activity = activity;
     }
 
-    public void onGlobalLayout()
-    {
-        activity.setGeneration(new Generation(20));
+    public void showNextGenerationOnView() {
+        activity.setGeneration(life.nextGeneration());
     }
 
-    public void nextGeneration() {
-        activity.setGeneration(getLife().nextGeneration());
+    public void onStartStopButtonClick() {
+        if (keepRunning) {
+            keepRunning = false;
+        } else {
+            keepRunning = true;
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    while (keepRunning) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showNextGenerationOnView();
+                            }
+                        });
+                    }
+                    return null;
+                }
+            }.execute();
+        }
     }
 
-    public void setNewStartingGeneration() {
-        getLife().setStartingGeneration(activity.getGeneration());
-    }
-
-    private Life getLife() {
-        return application.getLife();
+    public void onGlobalLayout() {
+        showNextGenerationOnView();
     }
 }

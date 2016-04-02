@@ -9,20 +9,25 @@ public class App extends Application{
     private Life life;
     private GameOfLifePresenter gameOfLifePresenter;
 
-    public Life getLife()
+    private Life getLife()
     {
-        return life;
-    }
+        if(life == null)
+        {
+            life = new Life();
+        }
 
-    public void setLife(Life life) {
-        this.life = life;
+        return life;
     }
 
     public GameOfLifePresenter getGameOfLifePresenter()
     {
         if (gameOfLifePresenter == null)
-            gameOfLifePresenter = new GameOfLifePresenter(this);
+            gameOfLifePresenter = new GameOfLifePresenter(getLife());
 
         return gameOfLifePresenter;
+    }
+
+    public void setGameOfLifePresenter(GameOfLifePresenter gameOfLifePresenter) {
+        this.gameOfLifePresenter = gameOfLifePresenter;
     }
 }
