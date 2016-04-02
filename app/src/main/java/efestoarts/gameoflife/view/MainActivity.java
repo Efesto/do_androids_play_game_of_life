@@ -3,8 +3,8 @@ package efestoarts.gameoflife.view;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import efestoarts.gameoflife.App;
 import efestoarts.gameoflife.R;
-import efestoarts.gameoflife.model.Generation;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +19,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextGeneration() {
-        world.setGeneration(new Generation());
+        world.setGeneration(((App)getApplication()).getLife().nextGeneration());
     }
 }

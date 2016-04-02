@@ -12,7 +12,6 @@ import efestoarts.gameoflife.model.Generation;
 
 public class WorldView extends RelativeLayout {
 
-    public static final int GRID_SIZE = 20;
     public Bitmap worldBitmap;
     private final Paint livingCellPaint;
 
@@ -30,14 +29,25 @@ public class WorldView extends RelativeLayout {
     public void setGeneration(Generation generation) {
         worldBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(worldBitmap);
-        //TODO: iterate through generation
 
-        drawLivingCell(canvas, 0, 0);
+        for(int yIndex = 0; yIndex < generation.getSize(); yIndex++) {
+            for(int xIndex = 0; xIndex < generation.getSize(); xIndex++) {
+                if(generation.getCells()[yIndex][xIndex])
+                    drawLivingCell(canvas, xIndex, yIndex, generation.getSize());
+            }
+
+        }
+
         invalidate();
     }
 
-    private void drawLivingCell(Canvas canvas, int x, int y) {
-        canvas.drawRect(x, y, getWidth()/ GRID_SIZE, getHeight()/GRID_SIZE, livingCellPaint);
+    private void drawLivingCell(Canvas canvas, int x, int y, int gridSize) {
+        int cellSize = getWidth()/ gridSize;
+        canvas.drawRect(
+                x * cellSize,
+                y * cellSize,
+                cellSize + x * cellSize,
+                cellSize + y * cellSize, livingCellPaint);
     }
 
     @Override
