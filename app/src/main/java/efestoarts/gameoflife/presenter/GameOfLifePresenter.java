@@ -28,7 +28,7 @@ public class GameOfLifePresenter {
     }
 
     public void setNewStartingGeneration() {
-        getLife().setGeneration(activity.getGeneration());
+        getLife().setStartingGeneration(activity.getGeneration());
     }
 
     private Life getLife() {
