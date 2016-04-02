@@ -1,6 +1,5 @@
 package efestoarts.gameoflife;
 
-import android.graphics.Color;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -17,12 +16,12 @@ import org.mockito.MockitoAnnotations;
 
 import efestoarts.gameoflife.model.Generation;
 import efestoarts.gameoflife.model.Life;
-import efestoarts.gameoflife.view.MainActivity;
-import efestoarts.gameoflife.view.WorldView;
+import efestoarts.gameoflife.view.WorldActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -31,8 +30,8 @@ import static org.mockito.Mockito.when;
 public class WorldViewTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
-            MainActivity.class);
+    public ActivityTestRule<WorldActivity> mActivityRule = new ActivityTestRule<>(
+            WorldActivity.class);
 
     @Mock
     Life mockedLife;
@@ -41,8 +40,7 @@ public class WorldViewTest {
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        App application = (App) InstrumentationRegistry.getTargetContext().getApplicationContext();
-        application.setLife(mockedLife);
+        getApp().setLife(mockedLife);
     }
 
     @Test
@@ -50,7 +48,7 @@ public class WorldViewTest {
         onView(withId(R.id.world)).check(matches(new org.hamcrest.Matcher<View>() {
             @Override
             public boolean matches(Object item) {
-                return ((View)item).getHeight() == ((View)item).getWidth();
+                return ((View) item).getHeight() == ((View) item).getWidth();
             }
 
             @Override
@@ -71,17 +69,46 @@ public class WorldViewTest {
     }
 
     @Test
-    public void next_generation()
-    {
-
-        setNextGeneration(new Generation(2, new boolean[][] {
+    public void setNewStartingGeneration() {
+        Generation gen = new Generation(2);
+        gen.cells = new boolean[][] {
                 {false, false},
-                {false, true}}));
+                {false, true}};
 
-        mActivityRule.getActivity().runOnUiThread(new Runnable() {
+        setNextGeneration(gen);
+
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActivityRule.getActivity().nextGeneration();
+                getApp().getGameOfLifePresenter().nextGeneration();
+            }
+        });
+
+        onView(withId(R.id.world)).perform(EspressoHelpers.clickXY(1, 1));
+        onView(withId(R.id.world)).check(matches(new CellMatcher(2, 0, 0, true)));
+
+        getApp().getGameOfLifePresenter().setNewStartingGeneration();
+        Generation expectedGeneration = new Generation(2);
+        expectedGeneration.cells = new boolean[][]{
+                {true, false},
+                {false, true}};
+        verify(mockedLife).setGeneration(expectedGeneration);
+    }
+
+    @Test
+    public void setGeneration()
+    {
+        Generation gen = new Generation(2);
+        gen.cells = new boolean[][] {
+                {false, false},
+                {false, true}};
+
+        setNextGeneration(gen);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getApp().getGameOfLifePresenter().nextGeneration();
             }
         });
 
@@ -94,45 +121,12 @@ public class WorldViewTest {
     private void setNextGeneration(Generation testGeneration) {
         when(mockedLife.nextGeneration()).thenReturn(testGeneration);
     }
-}
 
-class CellMatcher implements org.hamcrest.Matcher<View> {
-
-    private int size;
-    private int x;
-    private final int y;
-    private final boolean isAlive;
-
-    public CellMatcher(int size, int x, int y, boolean isAlive) {
-        this.size = size;
-        this.x = x;
-        this.y = y;
-        this.isAlive = isAlive;
+    private App getApp() {
+        return (App) InstrumentationRegistry.getTargetContext().getApplicationContext();
     }
 
-    @Override
-    public boolean matches(Object item) {
-        WorldView worldView = (WorldView)item;
-
-        int cellSize = worldView.getWidth() / size;
-        int cellCenterX = (cellSize * x) + (cellSize / 2);
-        int cellCenterY = (cellSize * y) + (cellSize / 2);
-
-        return worldView.worldBitmap.getPixel(cellCenterX, cellCenterY) == (isAlive ?
-                Color.BLACK : Color.TRANSPARENT);
-    }
-
-    @Override
-    public void describeMismatch(Object item, Description mismatchDescription) {
-
-    }
-
-    @Override
-    public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-
-    }
-
-    @Override
-    public void describeTo(Description description) {
+    private WorldActivity getActivity() {
+        return mActivityRule.getActivity();
     }
 }

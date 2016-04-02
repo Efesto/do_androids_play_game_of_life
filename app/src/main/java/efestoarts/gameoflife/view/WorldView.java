@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import efestoarts.gameoflife.model.Generation;
@@ -14,11 +16,27 @@ public class WorldView extends RelativeLayout {
 
     public Bitmap worldBitmap;
     private final Paint livingCellPaint;
+    private Generation generation;
 
     public WorldView(Context context, AttributeSet attrs) {
         super(context, attrs);
         livingCellPaint = new Paint();
         livingCellPaint.setColor(Color.BLACK);
+
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int cellIndexX = (int) event.getX() / getCellSize();
+                    int cellIndexY = (int) event.getY() / getCellSize();
+
+                    generation.cells[cellIndexY][cellIndexX] = !generation.cells[cellIndexY][cellIndexX];
+                    setGeneration(generation);
+                }
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -27,13 +45,15 @@ public class WorldView extends RelativeLayout {
     }
 
     public void setGeneration(Generation generation) {
+        this.generation = generation;
+
         worldBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(worldBitmap);
 
         for(int yIndex = 0; yIndex < generation.getSize(); yIndex++) {
             for(int xIndex = 0; xIndex < generation.getSize(); xIndex++) {
-                if(generation.getCells()[yIndex][xIndex])
-                    drawLivingCell(canvas, xIndex, yIndex, generation.getSize());
+                if(generation.cells[yIndex][xIndex])
+                    drawLivingCell(canvas, xIndex, yIndex);
             }
 
         }
@@ -41,8 +61,8 @@ public class WorldView extends RelativeLayout {
         invalidate();
     }
 
-    private void drawLivingCell(Canvas canvas, int x, int y, int gridSize) {
-        int cellSize = getWidth()/ gridSize;
+    private void drawLivingCell(Canvas canvas, int x, int y) {
+        int cellSize = getCellSize();
         canvas.drawRect(
                 x * cellSize,
                 y * cellSize,
@@ -50,10 +70,18 @@ public class WorldView extends RelativeLayout {
                 cellSize + y * cellSize, livingCellPaint);
     }
 
+    private int getCellSize() {
+        return getWidth()/ generation.getSize();
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (worldBitmap != null)
             canvas.drawBitmap(worldBitmap, 0, 0, null);
+    }
+
+    public Generation getGeneration() {
+        return generation;
     }
 }

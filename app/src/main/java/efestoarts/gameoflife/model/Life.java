@@ -1,11 +1,17 @@
 package efestoarts.gameoflife.model;
 
-import java.util.ArrayList;
-
 public class Life {
+
+    private Generation generation;
+
     public Generation nextGeneration()
     {
-        //TODO: grid size constant to extract
-        return new Generation(20, new boolean[][]{});
+        //TODO: calcoli su generation;
+        return generation;
+    }
+
+    public void setGeneration(Generation generation) {
+
+        this.generation = generation;
     }
 }
