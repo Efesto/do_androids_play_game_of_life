@@ -15,7 +15,7 @@ public class WorldActivity extends AppCompatActivity {
 
     private WorldView world;
     private Button startButton;
-    boolean buttonMeanStart = true;
+    boolean buttonClickStartsSimulation = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,18 +29,17 @@ public class WorldActivity extends AppCompatActivity {
 
         presenter.resume(this);
 
-
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.onStartStopButtonClick();
+                presenter.startStopSimulation();
 
-                if (buttonMeanStart)
+                if (buttonClickStartsSimulation)
                     startButton.setText(R.string.button_stop_label);
                 else
                     startButton.setText(R.string.button_start_label);
 
-                buttonMeanStart = !buttonMeanStart;
+                buttonClickStartsSimulation = !buttonClickStartsSimulation;
             }
         });
 
@@ -50,10 +49,6 @@ public class WorldActivity extends AppCompatActivity {
                 presenter.onGlobalLayout();
             }
         });
-    }
-
-    public Generation getGeneration() {
-        return world.getGeneration();
     }
 
     public void setGeneration(Generation generation) {

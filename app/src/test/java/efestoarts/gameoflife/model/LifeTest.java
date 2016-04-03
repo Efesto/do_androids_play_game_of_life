@@ -13,11 +13,6 @@ public class LifeTest {
 //    Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
     @Test
-    public void default_constructor() {
-        assertEquals(new Life().nextGeneration(), new Generation(20));
-    }
-
-    @Test
     public void death_by_under_population() {
         Generation generation = new Generation(3);
         //cell with one neighbour
@@ -85,8 +80,7 @@ public class LifeTest {
 
 
     private void assertNextGenerationIs(Generation actualGeneration, Generation nextGeneration) {
-        Life life = new Life();
-        life.setStartingGeneration(actualGeneration);
+        Life life = new Life(actualGeneration);
 
         Generation actualNextGeneration = life.nextGeneration();
 

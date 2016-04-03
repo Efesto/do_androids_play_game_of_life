@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Game of life</string>
+    <string name="app_name">Do android play game of life?</string>
     <string name="button_stop_label">Stop!</string>
     <string name="button_start_label">Start!</string>
 </resources>

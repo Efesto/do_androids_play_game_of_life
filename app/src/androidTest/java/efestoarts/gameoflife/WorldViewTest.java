@@ -37,7 +37,6 @@ public class WorldViewTest {
     public ActivityTestRule<WorldActivity> mActivityRule = new ActivityTestRule<>(
             WorldActivity.class, false, false);
 
-
     @Mock
     GameOfLifePresenter mockedGameOfLifePresenter;
 
@@ -82,7 +81,7 @@ public class WorldViewTest {
         onView(withId(R.id.start_button)).perform(ViewActions.click());
         onView(withId(R.id.start_button)).check(matches(withText("Start!")));
 
-        verify(mockedGameOfLifePresenter, times(2)).onStartStopButtonClick();
+        verify(mockedGameOfLifePresenter, times(2)).startStopSimulation();
     }
 
     @Test
@@ -106,7 +105,7 @@ public class WorldViewTest {
         expectedGeneration.cells = new boolean[][]{
                 {true, false},
                 {false, true}};
-        assertEquals(expectedGeneration, getActivity().getGeneration());
+        assertEquals(expectedGeneration, gen);
     }
 
     @Test

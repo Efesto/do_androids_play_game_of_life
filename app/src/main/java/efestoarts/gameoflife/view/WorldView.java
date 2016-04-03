@@ -79,10 +79,6 @@ public class WorldView extends RelativeLayout {
             canvas.drawBitmap(worldBitmap, 0, 0, null);
     }
 
-    public Generation getGeneration() {
-        return generation;
-    }
-
     public void setGeneration(Generation generation) {
         this.generation = generation;
     }

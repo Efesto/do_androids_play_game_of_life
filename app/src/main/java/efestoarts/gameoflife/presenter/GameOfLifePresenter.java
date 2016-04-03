@@ -7,9 +7,10 @@ import efestoarts.gameoflife.view.WorldActivity;
 
 public class GameOfLifePresenter {
 
+    public static final int SIMULATION_REFRESH_TIME = 100;
     private WorldActivity activity;
     private Life life;
-    private boolean keepRunning;
+    private boolean runSimulation;
 
     public GameOfLifePresenter(Life life) {
         this.life = life;
@@ -23,17 +24,17 @@ public class GameOfLifePresenter {
         activity.setGeneration(life.nextGeneration());
     }
 
-    public void onStartStopButtonClick() {
-        if (keepRunning) {
-            keepRunning = false;
+    public void startStopSimulation() {
+        if (runSimulation) {
+            runSimulation = false;
         } else {
-            keepRunning = true;
+            runSimulation = true;
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    while (keepRunning) {
+                    while (runSimulation) {
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(SIMULATION_REFRESH_TIME);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

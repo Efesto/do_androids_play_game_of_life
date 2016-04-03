@@ -2,27 +2,18 @@ package efestoarts.gameoflife;
 
 import android.app.Application;
 
+import efestoarts.gameoflife.model.Generation;
 import efestoarts.gameoflife.model.Life;
 import efestoarts.gameoflife.presenter.GameOfLifePresenter;
 
 public class App extends Application{
-    private Life life;
+    private static final int DEFAULT_GRID_SIZE = 20;
     private GameOfLifePresenter gameOfLifePresenter;
-
-    private Life getLife()
-    {
-        if(life == null)
-        {
-            life = new Life();
-        }
-
-        return life;
-    }
 
     public GameOfLifePresenter getGameOfLifePresenter()
     {
         if (gameOfLifePresenter == null)
-            gameOfLifePresenter = new GameOfLifePresenter(getLife());
+            gameOfLifePresenter = new GameOfLifePresenter(new Life(new Generation(DEFAULT_GRID_SIZE)));
 
         return gameOfLifePresenter;
     }

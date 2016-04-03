@@ -26,9 +26,8 @@ public class EspressoHelpers {
 
                         final float screenX = screenPos[0] + x;
                         final float screenY = screenPos[1] + y;
-                        float[] coordinates = {screenX, screenY};
 
-                        return coordinates;
+                        return new float[]{screenX, screenY};
                     }
                 },
                 Press.FINGER);
@@ -39,13 +38,13 @@ public class EspressoHelpers {
 
 class CellMatcher implements org.hamcrest.Matcher<View> {
 
-    private int size;
+    private int gridSize;
     private int x;
     private final int y;
     private final boolean isAlive;
 
-    public CellMatcher(int size, int x, int y, boolean isAlive) {
-        this.size = size;
+    public CellMatcher(int gridSize, int x, int y, boolean isAlive) {
+        this.gridSize = gridSize;
         this.x = x;
         this.y = y;
         this.isAlive = isAlive;
@@ -55,7 +54,7 @@ class CellMatcher implements org.hamcrest.Matcher<View> {
     public boolean matches(Object item) {
         WorldView worldView = (WorldView) item;
 
-        int cellSize = worldView.getWidth() / size;
+        int cellSize = worldView.getWidth() / gridSize;
         int cellCenterX = (cellSize * x) + (cellSize / 2);
         int cellCenterY = (cellSize * y) + (cellSize / 2);
 

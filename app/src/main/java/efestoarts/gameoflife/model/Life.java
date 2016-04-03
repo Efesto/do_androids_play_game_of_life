@@ -2,11 +2,11 @@ package efestoarts.gameoflife.model;
 
 public class Life {
 
-    public Life() {
-        currentGeneration = new Generation(20);
-    }
+    public Generation currentGeneration;
 
-    private Generation currentGeneration;
+    public Life(Generation generation) {
+        currentGeneration = generation;
+    }
 
     public Generation nextGeneration()
     {
@@ -48,9 +48,5 @@ public class Life {
             }
         }
         return counter;
-    }
-
-    public void setStartingGeneration(Generation generation) {
-        this.currentGeneration = generation;
     }
 }
