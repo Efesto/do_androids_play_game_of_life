@@ -13,10 +13,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.inject.Inject;
+
 import efestoarts.gameoflife.model.Generation;
+import efestoarts.gameoflife.model.Life;
 import efestoarts.gameoflife.presenter.GameOfLifePresenter;
 import efestoarts.gameoflife.view.WorldActivity;
 
@@ -25,6 +29,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -37,14 +42,10 @@ public class WorldViewTest {
     public ActivityTestRule<WorldActivity> mActivityRule = new ActivityTestRule<>(
             WorldActivity.class, false, false);
 
-    @Mock
-    GameOfLifePresenter mockedGameOfLifePresenter;
-
     @Before
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        getApp().setGameOfLifePresenter(mockedGameOfLifePresenter);
         mActivityRule.launchActivity(new Intent());
     }
 
@@ -75,13 +76,15 @@ public class WorldViewTest {
 
     @Test
     public void start_stop_button() {
+        DaggerMockedAppComponent.create().inject(getActivity());
+
         onView(withId(R.id.start_button)).check(matches(withText("Start!")));
         onView(withId(R.id.start_button)).perform(ViewActions.click());
         onView(withId(R.id.start_button)).check(matches(withText("Stop!")));
         onView(withId(R.id.start_button)).perform(ViewActions.click());
         onView(withId(R.id.start_button)).check(matches(withText("Start!")));
 
-        verify(mockedGameOfLifePresenter, times(2)).startStopSimulation();
+        verify(getActivity().presenter, times(2)).startStopSimulation();
     }
 
     @Test
@@ -128,11 +131,6 @@ public class WorldViewTest {
         onView(withId(R.id.world)).check(matches(new CellMatcher(2, 1, 0, false)));
         onView(withId(R.id.world)).check(matches(new CellMatcher(2, 1, 1, true)));
     }
-
-    private App getApp() {
-        return (App) InstrumentationRegistry.getTargetContext().getApplicationContext();
-    }
-
     private WorldActivity getActivity() {
         return mActivityRule.getActivity();
     }

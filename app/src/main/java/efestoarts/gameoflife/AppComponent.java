@@ -1,0 +1,12 @@
+package efestoarts.gameoflife;
+
+import javax.inject.Singleton;
+
+import dagger.Component;
+import efestoarts.gameoflife.view.WorldActivity;
+
+@Singleton
+@Component(modules = AppModule.class)
+public interface AppComponent {
+    void inject(WorldActivity test);
+}

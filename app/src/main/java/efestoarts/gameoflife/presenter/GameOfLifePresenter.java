@@ -2,6 +2,8 @@ package efestoarts.gameoflife.presenter;
 
 import android.os.AsyncTask;
 
+import javax.inject.Inject;
+
 import efestoarts.gameoflife.model.Life;
 import efestoarts.gameoflife.view.WorldActivity;
 
@@ -12,6 +14,7 @@ public class GameOfLifePresenter {
     private Life life;
     private boolean runSimulation;
 
+    @Inject
     public GameOfLifePresenter(Life life) {
         this.life = life;
     }
