@@ -1,7 +1,6 @@
-package efestoarts.gameoflife;
+package efestoarts.gameoflife.view;
 
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -13,23 +12,18 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import javax.inject.Inject;
-
+import efestoarts.gameoflife.CellMatcher;
+import efestoarts.gameoflife.DaggerMockedAppComponent;
+import efestoarts.gameoflife.EspressoHelpers;
+import efestoarts.gameoflife.R;
 import efestoarts.gameoflife.model.Generation;
-import efestoarts.gameoflife.model.Life;
-import efestoarts.gameoflife.presenter.GameOfLifePresenter;
-import efestoarts.gameoflife.view.WorldActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -45,7 +39,6 @@ public class WorldViewTest {
     @Before
     public void setup()
     {
-        MockitoAnnotations.initMocks(this);
         mActivityRule.launchActivity(new Intent());
     }
 

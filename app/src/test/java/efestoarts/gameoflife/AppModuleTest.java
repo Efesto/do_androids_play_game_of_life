@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import efestoarts.gameoflife.model.Life;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AppModuleTest {
 
