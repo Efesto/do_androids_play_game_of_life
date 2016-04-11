@@ -8,6 +8,9 @@ import android.widget.Button;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import efestoarts.gameoflife.App;
 import efestoarts.gameoflife.R;
 import efestoarts.gameoflife.model.Generation;
@@ -15,9 +18,22 @@ import efestoarts.gameoflife.presenter.GameOfLifePresenter;
 
 public class WorldActivity extends AppCompatActivity {
 
-    private WorldView world;
-    private Button startButton;
+    @Bind(R.id.world) WorldView world;
+    @Bind(R.id.start_button) Button startButton;
+
     boolean buttonClickStartsSimulation = true;
+    @OnClick(R.id.start_button) void startStopSimulation()
+    {
+        presenter.startStopSimulation();
+
+        if (buttonClickStartsSimulation)
+            startButton.setText(R.string.button_stop_label);
+        else
+            startButton.setText(R.string.button_start_label);
+
+        buttonClickStartsSimulation = !buttonClickStartsSimulation;
+    }
+
     @Inject public GameOfLifePresenter presenter;
 
     @Override
@@ -25,25 +41,9 @@ public class WorldActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_world);
         ((App) getApplication()).getAppComponent().inject(this);
-
-        world = (WorldView) findViewById(R.id.world);
-        startButton = (Button) findViewById(R.id.start_button);
+        ButterKnife.bind(this);
 
         presenter.resume(this);
-
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.startStopSimulation();
-
-                if (buttonClickStartsSimulation)
-                    startButton.setText(R.string.button_stop_label);
-                else
-                    startButton.setText(R.string.button_start_label);
-
-                buttonClickStartsSimulation = !buttonClickStartsSimulation;
-            }
-        });
 
         world.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

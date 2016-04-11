@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import butterknife.ButterKnife;
+import butterknife.OnTouch;
 import efestoarts.gameoflife.model.Generation;
 
 public class WorldView extends RelativeLayout {
@@ -18,25 +20,23 @@ public class WorldView extends RelativeLayout {
     private final Paint livingCellPaint;
     private Generation generation;
 
+    @OnTouch boolean cellTouched(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int cellIndexX = (int) event.getX() / getCellSize();
+            int cellIndexY = (int) event.getY() / getCellSize();
+
+            generation.cells[cellIndexY][cellIndexX] = !generation.cells[cellIndexY][cellIndexX];
+            refreshView();
+        }
+
+        return true;
+    }
+
     public WorldView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        ButterKnife.bind(this);
         livingCellPaint = new Paint();
         livingCellPaint.setColor(Color.BLACK);
-
-        setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    int cellIndexX = (int) event.getX() / getCellSize();
-                    int cellIndexY = (int) event.getY() / getCellSize();
-
-                    generation.cells[cellIndexY][cellIndexX] = !generation.cells[cellIndexY][cellIndexX];
-                    refreshView();
-                }
-
-                return true;
-            }
-        });
     }
 
     @Override
