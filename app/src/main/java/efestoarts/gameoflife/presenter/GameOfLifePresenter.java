@@ -60,7 +60,7 @@ public class GameOfLifePresenter {
     }
 
     public void onGlobalLayout() {
-        Observable.just(life.nextGeneration())
+        Observable.just(life.currentGeneration)
                 .subscribeOn(schedulers.getComputationalScheduler())
                 .observeOn(schedulers.getUiScheduler())
                 .subscribe(setGenerationOnActivity);
